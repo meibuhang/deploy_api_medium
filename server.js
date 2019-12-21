@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({
 })); // support encoded bodies
 app.use(express.static(path.resolve(__dirname, 'public')));
 app.use(cors()); //lintas antar port front and back
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8080;
 
 app.get("/", (req, res) => {
     res.send("Hello Express !");
