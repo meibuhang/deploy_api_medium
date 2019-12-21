@@ -1,4 +1,4 @@
-const verifySignUp = require('./verifySignUp');
+const verifySignUp = require('./verifysignup');
 module.exports = function (app) {
     const controller = require('../controllers/users');
     // sign up
