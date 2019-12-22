@@ -1,7 +1,7 @@
 const tb_article = require("../models").Article;
 const tb_cat = require("../models").Category;
 const tb_user = require("../models").User;
-
+const tb_com = require("../models").Comment;
 //all articles
 exports.allArticles = (req, res) => {
     console.log("Processing func -> Add Category");
@@ -30,8 +30,8 @@ exports.allArticles = (req, res) => {
             },
             order: [
                 ["createdAt", "DESC"]
-            ],
-            limit: 5
+            ]
+            
         })
         .then(data => {
             res.status(200).send({
@@ -44,12 +44,24 @@ exports.allArticles = (req, res) => {
 
 //list articles lastest
 exports.articlesLastest = (req, res) => {
-    console.log("Processing func -> Article by Category");
+    console.log("Processing func -> Article Lastest");
+  tb_article.findAll({
+      order:[["id","DESC"]],
+      attributes:{exclude:["createdAt","updatedAt"]}
+  }).then(data=>{
+      res.send(data)
+  })
+};
+
+
+//list articles by Person
+exports.articlesByPerson = (req, res) => {
+    console.log("Processing func -> Article by Person");
     // const {
     //     id_Cat
     // } = req.params.idCat;
-    const id = req.params.idCat;
-    console.log(req.params.idCat);
+    const id = req.params.userId;
+    console.log(req.params.userId);
     tb_article
         .findAll({
             include: [{
@@ -64,7 +76,7 @@ exports.articlesLastest = (req, res) => {
                 }
             ],
             where: {
-                category_id: id
+                author_id: id
             },
             order: [
                 ["createdAt", "DESC"]
@@ -79,6 +91,8 @@ exports.articlesLastest = (req, res) => {
             });
         });
 };
+
+
 
 //list articles by Category
 exports.articlesByCategory = (req, res) => {
@@ -282,4 +296,87 @@ exports.deleteArticle = async (req, res, next) => {
         next(err);
     }
 
+};
+
+
+//list related article
+exports.articlesRelatedArticles = (req, res) => {
+    console.log("Processing func -> Article by Category");
+    // const {
+    //     id_Cat
+    // } = req.params.idCat;
+    const id = req.params.idCat;
+    console.log(req.params.idCat);
+    tb_article
+        .findAll({
+            include: [{
+                    model: tb_cat,
+                    as: "categories",
+                    attributes: ["id", "name"]
+                },
+                {
+                    model: tb_user,
+                    as: "users",
+                    attributes: ["id", "fullname"]
+                }
+            ],
+            where: {
+                category_id: id
+            },
+            order: [
+                ["createdAt", "DESC"]
+            ],
+            limit: 3
+        })
+        .then(data => {
+            res.status(200).send({
+                is_success: 1,
+                message: "Success",
+                data: data
+            });
+        });
+};
+
+
+//list Detail Article
+exports.detailArticles = (req, res) => {
+    console.log("Processing func -> Detail");
+    // const {
+    //     id_Cat
+    // } = req.params.idCat;
+    const id = req.params.articleid;
+    console.log(id);
+    tb_article
+        .findOne({
+            include: [{
+                    model: tb_cat,
+                    as: "categories",
+                    attributes: ["id", "name"]
+                },
+                {
+                    model: tb_user,
+                    as: "users",
+                    attributes: ["id", "fullname"]
+                },
+                {
+                    model: tb_com,
+                    as: "comments",
+                    attributes: ["id", "comment","createdAt","updatedAt"]
+                }
+            ],
+            where: {
+                id: id
+            },
+            order: [
+                ["createdAt", "DESC"]
+            ],
+            limit: 5
+        })
+        .then(data => {
+            res.status(200).send({
+                is_success: 1,
+                message: "Success",
+                data: data
+            });
+        });
 };

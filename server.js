@@ -22,6 +22,7 @@ require('./router/categories')(app);
 require('./router/user')(app);
 require('./router/Articles')(app);
 require('./router/comment')(app);
+require('./router/follows')(app);
 
 //listen to defined port
 app.listen(port, () => console.log("App listening at http://", port));

@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Comment.belongsTo(models.Article, {
       foreignKey: "article_id",
-      as: "articles",
-      sourceKey: "id"
+      as: "comments",
+  
     });
   };
   return Comment;
